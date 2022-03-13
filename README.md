@@ -24,8 +24,11 @@ including calculating curvature and shape diameter,
 converting models into SDF voxels, calculating feature size as control parameter. 
 Most of these works are done in C++. If you are interested 
 in that part, you can implement with the help of [trimesh](https://gfx.cs.princeton.edu/proj/trimesh2/) 
-and [Thea](https://github.com/sidch/Thea). 
-We put the data after pre-processing [here](https://umass-my.sharepoint.com/:u:/g/personal/zhanxu_umass_edu/EYV5fbKw3B9IjbQLuymC2sQBaZxVNgoJEffdM49Ka3qNzA?e=dmEztH). 
+and [Thea](https://github.com/sidch/Thea). <br/><br/>
+To download Xu et al dataset [Link](https://umass-my.sharepoint.com/:u:/g/personal/zhanxu_umass_edu/EYV5fbKw3B9IjbQLuymC2sQBaZxVNgoJEffdM49Ka3qNzA?e=dmEztH). <br/>
+To download Robert dataset of Skeleton cruvatures [Link](https://drive.google.com/file/d/1sr-J2v5_GmY1lBWbTL8PuyXyL3OzbUgP/view)
+
+
 The folder includes several sub-folders:
 
 * obj: all meshes in obj format. We triangulated them by [MeshLab](http://www.meshlab.net/), and fixed them by [meshfix](https://github.com/MarcoAttene/MeshFix-V2.1).
