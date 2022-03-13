@@ -3,6 +3,7 @@ checkpoints/
 logs/
 model_resource_data/
 results/
+bin/
 *.sbatch
 *.txt
 *.err
