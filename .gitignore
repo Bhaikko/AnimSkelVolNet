@@ -8,3 +8,4 @@ bin/
 *.txt
 *.err
 *.cpython-36.pyc
+*.obj
