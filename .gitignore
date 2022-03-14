@@ -9,3 +9,5 @@ bin/
 *.err
 *.cpython-36.pyc
 *.obj
+*.rar
+*.zip

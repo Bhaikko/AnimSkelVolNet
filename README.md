@@ -26,7 +26,7 @@ Most of these works are done in C++. If you are interested
 in that part, you can implement with the help of [trimesh](https://gfx.cs.princeton.edu/proj/trimesh2/) 
 and [Thea](https://github.com/sidch/Thea). <br/><br/>
 To download Xu et al dataset [Link](https://umass-my.sharepoint.com/:u:/g/personal/zhanxu_umass_edu/EYV5fbKw3B9IjbQLuymC2sQBaZxVNgoJEffdM49Ka3qNzA?e=dmEztH). <br/>
-To download Robert dataset of Skeleton cruvatures [Link](https://drive.google.com/file/d/1sr-J2v5_GmY1lBWbTL8PuyXyL3OzbUgP/view) <br/>
+To download Robert dataset of Skeleton curvatures [Link](https://drive.google.com/file/d/1sr-J2v5_GmY1lBWbTL8PuyXyL3OzbUgP/view) <br/>
 Shape Descriptor software used to calculate Local descriptors [Link](https://sourceforge.net/projects/meshprocessing/)
 
 
