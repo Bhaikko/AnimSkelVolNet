@@ -304,7 +304,7 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
     hf.create_dataset('test_vert', (num_test, dim_pad, dim_pad, dim_pad), np.uint8)
     hf.create_dataset('test_curvature', (num_test, 2, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_sd', (num_test, 1, dim_pad, dim_pad, dim_pad), np.float16)
-    hf.create_dataset('test_si', (num_test, dim_pad, dim_pad, dim_pad), np.float16)
+    hf.create_dataset('test_ci', (num_test, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_si', (num_test, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_label_joint', (num_test, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_label_bone', (num_test, dim_pad, dim_pad, dim_pad), np.float16)
