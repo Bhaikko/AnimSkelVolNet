@@ -239,7 +239,7 @@ def genDataset_inner(root_folder, model_id, subset, dim_ori=82, r=3, dim_pad=88)
             for c_node in p_node.children:
                 ch_pos = Cartesian2Voxcoord(np.array(c_node.pos), mesh_vox.translate, mesh_vox.scale, mesh_vox.dims[0])
                 ch_pos = (
-                ch_pos[0] - center_trans[0] + r, ch_pos[1] - center_trans[1] + r, ch_pos[2] - center_trans[2] + r)
+                    ch_pos[0] - center_trans[0] + r, ch_pos[1] - center_trans[1] + r, ch_pos[2] - center_trans[2] + r)
                 draw_bonemap(heatmap_bones, pos, ch_pos, output_resulotion=dim_pad)
         this_level = next_level
 
@@ -286,8 +286,8 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
     hf.create_dataset('train_vert', (num_train, dim_pad, dim_pad, dim_pad), np.uint8)
     hf.create_dataset('train_curvature', (num_train, 2, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('train_sd', (num_train, 1, dim_pad, dim_pad, dim_pad), np.float16)
-    hf.create_dataset('train_ci', (num_train,dim_pad, dim_pad, dim_pad), np.float16)
-    hf.create_dataset('train_si', (num_train, dim_pad, dim_pad, dim_pad), np.float16)
+    hf.create_dataset('train_ci', (num_train, 1, dim_pad, dim_pad, dim_pad), np.float16)
+    hf.create_dataset('train_si', (num_train, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('train_label_joint', (num_train, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('train_label_bone', (num_train, dim_pad, dim_pad, dim_pad), np.float16)
 
@@ -295,8 +295,8 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
     hf.create_dataset('val_vert', (num_val, dim_pad, dim_pad, dim_pad), np.uint8)
     hf.create_dataset('val_curvature', (num_val, 2, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('val_sd', (num_val, 1, dim_pad, dim_pad, dim_pad), np.float16)
-    hf.create_dataset('val_ci', (num_val, dim_pad, dim_pad, dim_pad), np.float16)
-    hf.create_dataset('val_si', (num_val, dim_pad, dim_pad, dim_pad), np.float16)
+    hf.create_dataset('val_ci', (num_val, 1, dim_pad, dim_pad, dim_pad), np.float16)
+    hf.create_dataset('val_si', (num_val, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('val_label_joint', (num_val, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('val_label_bone', (num_val, dim_pad, dim_pad, dim_pad), np.float16)
 
@@ -304,8 +304,8 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
     hf.create_dataset('test_vert', (num_test, dim_pad, dim_pad, dim_pad), np.uint8)
     hf.create_dataset('test_curvature', (num_test, 2, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_sd', (num_test, 1, dim_pad, dim_pad, dim_pad), np.float16)
-    hf.create_dataset('test_ci', (num_test, dim_pad, dim_pad, dim_pad), np.float16)
-    hf.create_dataset('test_si', (num_test, dim_pad, dim_pad, dim_pad), np.float16)
+    hf.create_dataset('test_ci', (num_test, 1, dim_pad, dim_pad, dim_pad), np.float16)
+    hf.create_dataset('test_si', (num_test, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_label_joint', (num_test, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_label_bone', (num_test, dim_pad, dim_pad, dim_pad), np.float16)
 
@@ -313,7 +313,7 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
     anno_all = []
     for train_id in tqdm(range(len(train_id_list))):
         model_id = train_id_list[train_id]
-        mesh_vox, heatmap_joint, heatmap_bones, heatmap_verts, curvature, sd,curv_index, shape_index, anno = \
+        mesh_vox, heatmap_joint, heatmap_bones, heatmap_verts, curvature, sd, curv_index, shape_index, anno = \
             genDataset_inner(root_folder, model_id, subset='train', dim_ori=dim_ori, r=padding, dim_pad=dim_pad)
         hf['train_data'][train_id, :, :, :] = mesh_vox
         hf['train_vert'][train_id, :, :, :] = heatmap_verts
@@ -327,7 +327,7 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
 
     for val_id in tqdm(range(len(val_id_list))):
         model_id = val_id_list[val_id]
-        mesh_vox, heatmap_joint, heatmap_bones, heatmap_verts, curvature, sd,curv_index, shape_index, anno = \
+        mesh_vox, heatmap_joint, heatmap_bones, heatmap_verts, curvature, sd, curv_index, shape_index, anno = \
             genDataset_inner(root_folder, model_id, subset='val', dim_ori=dim_ori, r=padding, dim_pad=dim_pad)
         hf['val_data'][val_id, :, :, :] = mesh_vox
         hf['val_vert'][val_id, :, :, :] = heatmap_verts
@@ -341,7 +341,7 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
 
     for test_id in tqdm(range(len(test_id_list))):
         model_id = test_id_list[test_id]
-        mesh_vox, heatmap_joint, heatmap_bones, heatmap_verts, curvature, sd,curv_index, shape_index, anno = \
+        mesh_vox, heatmap_joint, heatmap_bones, heatmap_verts, curvature, sd, curv_index, shape_index, anno = \
             genDataset_inner(root_folder, model_id, subset='test', dim_ori=dim_ori, r=padding, dim_pad=dim_pad)
         hf['test_data'][test_id, :, :, :] = mesh_vox
         hf['test_vert'][test_id, :, :, :] = heatmap_verts
