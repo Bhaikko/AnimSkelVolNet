@@ -6,6 +6,7 @@ This script is for generating training/testing data, which is saved as a h5 file
 """
 
 import sys
+
 sys.path.append('./')
 
 import numpy as np
@@ -24,15 +25,15 @@ from util.rigging_parser.obj_parser import Mesh_obj
 def unique_rows(a):
     # remove repeat rows from numpy array
     a = np.ascontiguousarray(a)
-    unique_a = np.unique(a.view([('', a.dtype)]*a.shape[1]))
+    unique_a = np.unique(a.view([('', a.dtype)] * a.shape[1]))
     return unique_a.view(a.dtype).reshape((unique_a.shape[0], a.shape[1]))
 
 
 def draw_jointmap(img, pt, sigma):
     # Draw a 3D gaussian
     # Check that any part of the gaussian is in-bounds
-    ul = [int(pt[0] - 3 * sigma), int(pt[1] - 3 * sigma), int(pt[2] - 3*sigma)]
-    br = [int(pt[0] + 3 * sigma + 1), int(pt[1] + 3 * sigma + 1), int(pt[2] + 3*sigma +1)]
+    ul = [int(pt[0] - 3 * sigma), int(pt[1] - 3 * sigma), int(pt[2] - 3 * sigma)]
+    br = [int(pt[0] + 3 * sigma + 1), int(pt[1] + 3 * sigma + 1), int(pt[2] + 3 * sigma + 1)]
     if (ul[0] >= img.shape[0] or ul[1] >= img.shape[1] or ul[2] >= img.shape[2] or
             br[0] < 0 or br[1] < 0 or br[2] < 0):
         # If not, just return the image as is
@@ -67,9 +68,9 @@ def draw_bonemap(heatmap, p_pos, c_pos, output_resulotion):
     c_pos = np.asarray(c_pos)
     ray = c_pos - p_pos
     i_step = np.arange(1, 100)
-    unit_step = (ray / 100)[np.newaxis,:]
+    unit_step = (ray / 100)[np.newaxis, :]
     unit_step = np.repeat(unit_step, 99, axis=0)
-    pos_step = p_pos + unit_step * i_step[:,np.newaxis]
+    pos_step = p_pos + unit_step * i_step[:, np.newaxis]
     pos_step = np.round(pos_step).astype(np.uint8)
     pos_step = np.array([p for p in pos_step if np.all(p >= 0) and np.all(p < output_resulotion)])
     if len(pos_step) != 0:
@@ -111,7 +112,7 @@ def getConditions(fs_filename):
 
 
 def center_vox(volumn_input):
-    #put the occupied voxels at the center instead of corner
+    # put the occupied voxels at the center instead of corner
     pos = np.where(volumn_input > 0)
     x_max, x_min = np.max(pos[0]), np.min(pos[0])
     y_max, y_min = np.max(pos[1]), np.min(pos[1])
@@ -146,8 +147,8 @@ def bin2sdf(input):
     sdf_in = -1
     while np.sum(fill_map) != np.sum(input):
         changing_map_new = ndimage.binary_erosion(changing_map)
-        fill_map[np.where(changing_map_new!=changing_map)] = True
-        output[np.where(changing_map_new!=changing_map)] = sdf_in
+        fill_map[np.where(changing_map_new != changing_map)] = True
+        output[np.where(changing_map_new != changing_map)] = sdf_in
         changing_map = changing_map_new.copy()
         sdf_in -= 1
     # fill outside. No need to fill all of them, since during training, outside part will be masked.
@@ -155,15 +156,15 @@ def bin2sdf(input):
     sdf_out = 1
     while np.sum(fill_map) != np.size(input):
         changing_map_new = ndimage.binary_dilation(changing_map)
-        fill_map[np.where(changing_map_new!=changing_map)] = True
-        output[np.where(changing_map_new!=changing_map)] = sdf_out
+        fill_map[np.where(changing_map_new != changing_map)] = True
+        output[np.where(changing_map_new != changing_map)] = sdf_out
         changing_map = changing_map_new.copy()
         sdf_out += 1
         if sdf_out == -sdf_in:
             break
     # Normalization
-    output[np.where(output < 0)] /= (-sdf_in-1)
-    output[np.where(output > 0)] /= (sdf_out-1)
+    output[np.where(output < 0)] /= (-sdf_in - 1)
+    output[np.where(output > 0)] /= (sdf_out - 1)
     return output
 
 
@@ -204,11 +205,11 @@ def genDataset_inner(root_folder, model_id, subset, dim_ori=82, r=3, dim_pad=88)
     vox_file = os.path.join(root_folder, 'vox_82/{:d}.binvox'.format(model_id))
     skel_file = os.path.join(root_folder, 'skel/{:d}.txt'.format(model_id))
     fs_file = os.path.join(root_folder, 'fs/{:d}_featuresize.txt'.format(model_id))
-
     # read original voxels and pad it.
     with open(vox_file, 'rb') as f:
         mesh_vox = binvox_rw.read_as_3d_array(f)
-    mesh_vox_padded = np.zeros((mesh_vox.dims[0] + 2 * r, mesh_vox.dims[1] + 2 * r, mesh_vox.dims[2] + 2 * r), dtype=np.float16)
+    mesh_vox_padded = np.zeros((mesh_vox.dims[0] + 2 * r, mesh_vox.dims[1] + 2 * r, mesh_vox.dims[2] + 2 * r),
+                               dtype=np.float16)
     mesh_vox_padded[r:mesh_vox.dims[0] + r, r:mesh_vox.dims[1] + r, r:mesh_vox.dims[2] + r] = mesh_vox.data
     # put the occupied voxels at the center instead of left-top corner
     mesh_vox_padded, center_trans = center_vox(mesh_vox_padded)
@@ -216,14 +217,15 @@ def genDataset_inner(root_folder, model_id, subset, dim_ori=82, r=3, dim_pad=88)
     mesh_vox_padded = bin2sdf(mesh_vox_padded)
 
     mesh = Mesh_obj(mesh_file)
-    min_5_fs = getConditions(fs_file) # get 5th-percentile control parameter
-    skel = Skel(skel_file) # read in ground-truth skeleton
+    min_5_fs = getConditions(fs_file)  # get 5th-percentile control parameter
+    skel = Skel(skel_file)  # read in ground-truth skeleton
     heatmap_joint = np.zeros((int(mesh_vox.dims[0] + 2 * r), int(mesh_vox.dims[1] + 2 * r),
                               int(mesh_vox.dims[2] + 2 * r)), dtype=np.float16)
     heatmap_bones = np.zeros((int(mesh_vox.dims[0] + 2 * r), int(mesh_vox.dims[1] + 2 * r),
                               int(mesh_vox.dims[2] + 2 * r)), dtype=np.float16)
     # create vertice density heatmap.
-    heatmap_verts, avg_edge = get_surface_vertice(mesh, mesh_vox.translate, mesh_vox.scale, center_trans, dim_ori, r, dim_pad)
+    heatmap_verts, avg_edge = get_surface_vertice(mesh, mesh_vox.translate, mesh_vox.scale, center_trans, dim_ori, r,
+                                                  dim_pad)
     # start to create target joint&bone heatmaps. BFS iteration.
     this_level = [skel.root]
     while this_level:
@@ -231,12 +233,13 @@ def genDataset_inner(root_folder, model_id, subset, dim_ori=82, r=3, dim_pad=88)
         for p_node in this_level:
             pos = Cartesian2Voxcoord(np.array(p_node.pos), mesh_vox.translate, mesh_vox.scale, mesh_vox.dims[0])
             pos = (pos[0] - center_trans[0] + r, pos[1] - center_trans[1] + r, pos[2] - center_trans[2] + r)
-            pos = np.clip(pos, a_min=0, a_max=dim_pad-1)
+            pos = np.clip(pos, a_min=0, a_max=dim_pad - 1)
             draw_jointmap(heatmap_joint, pos, sigma=0.6)
             next_level += p_node.children
             for c_node in p_node.children:
                 ch_pos = Cartesian2Voxcoord(np.array(c_node.pos), mesh_vox.translate, mesh_vox.scale, mesh_vox.dims[0])
-                ch_pos = (ch_pos[0] - center_trans[0] + r, ch_pos[1] - center_trans[1] + r, ch_pos[2] - center_trans[2] + r)
+                ch_pos = (
+                ch_pos[0] - center_trans[0] + r, ch_pos[1] - center_trans[1] + r, ch_pos[2] - center_trans[2] + r)
                 draw_bonemap(heatmap_bones, pos, ch_pos, output_resulotion=dim_pad)
         this_level = next_level
 
@@ -257,10 +260,14 @@ def genDataset_inner(root_folder, model_id, subset, dim_ori=82, r=3, dim_pad=88)
         curvature_raw[:, coord_v_trans[:, 0], coord_v_trans[:, 1], coord_v_trans[:, 2]]
     sd_surface[:, coord_v[:, 0], coord_v[:, 1], coord_v[:, 2]] = \
         sd_raw[coord_v_trans[:, 0], coord_v_trans[:, 1], coord_v_trans[:, 2]]
+    # reading curvature index
+    curv_index = np.load(os.path.join(root_folder, 'curveindex_npy/{:d}_curv_curveindex.npy'.format(model_id)))
+    # reading shape index
+    shape_index = np.load(os.path.join(root_folder, 'shapeindex_npy/{:d}_curv_shapeindex.npy'.format(model_id)))
 
     anno = {'name': str(model_id), 'min_5_fs': min_5_fs, 'translate': mesh_vox.translate, 'scale': mesh_vox.scale,
             'subset': subset, 'center_trans': center_trans, 'avg_edge': avg_edge}
-    return mesh_vox_padded, heatmap_joint, heatmap_bones, heatmap_verts, curvature_surface, sd_surface, anno
+    return mesh_vox_padded, heatmap_joint, heatmap_bones, heatmap_verts, curvature_surface, sd_surface, curv_index, shape_index, anno
 
 
 def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
@@ -279,6 +286,8 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
     hf.create_dataset('train_vert', (num_train, dim_pad, dim_pad, dim_pad), np.uint8)
     hf.create_dataset('train_curvature', (num_train, 2, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('train_sd', (num_train, 1, dim_pad, dim_pad, dim_pad), np.float16)
+    hf.create_dataset('train_ci', (num_train,dim_pad, dim_pad, dim_pad), np.float16)
+    hf.create_dataset('train_si', (num_train, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('train_label_joint', (num_train, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('train_label_bone', (num_train, dim_pad, dim_pad, dim_pad), np.float16)
 
@@ -286,6 +295,8 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
     hf.create_dataset('val_vert', (num_val, dim_pad, dim_pad, dim_pad), np.uint8)
     hf.create_dataset('val_curvature', (num_val, 2, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('val_sd', (num_val, 1, dim_pad, dim_pad, dim_pad), np.float16)
+    hf.create_dataset('val_ci', (num_val, dim_pad, dim_pad, dim_pad), np.float16)
+    hf.create_dataset('val_si', (num_val, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('val_label_joint', (num_val, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('val_label_bone', (num_val, dim_pad, dim_pad, dim_pad), np.float16)
 
@@ -293,6 +304,8 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
     hf.create_dataset('test_vert', (num_test, dim_pad, dim_pad, dim_pad), np.uint8)
     hf.create_dataset('test_curvature', (num_test, 2, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_sd', (num_test, 1, dim_pad, dim_pad, dim_pad), np.float16)
+    hf.create_dataset('test_si', (num_test, dim_pad, dim_pad, dim_pad), np.float16)
+    hf.create_dataset('test_si', (num_test, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_label_joint', (num_test, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_label_bone', (num_test, dim_pad, dim_pad, dim_pad), np.float16)
 
@@ -300,7 +313,7 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
     anno_all = []
     for train_id in tqdm(range(len(train_id_list))):
         model_id = train_id_list[train_id]
-        mesh_vox, heatmap_joint, heatmap_bones, heatmap_verts, curvature, sd, anno = \
+        mesh_vox, heatmap_joint, heatmap_bones, heatmap_verts, curvature, sd,curv_index, shape_index, anno = \
             genDataset_inner(root_folder, model_id, subset='train', dim_ori=dim_ori, r=padding, dim_pad=dim_pad)
         hf['train_data'][train_id, :, :, :] = mesh_vox
         hf['train_vert'][train_id, :, :, :] = heatmap_verts
@@ -308,11 +321,13 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
         hf['train_label_bone'][train_id, :, :, :] = heatmap_bones
         hf['train_curvature'][train_id, ...] = curvature[np.newaxis, ...]
         hf['train_sd'][train_id, ...] = sd[np.newaxis, ...]
+        hf['train_ci'][train_id, ...] = curv_index[np.newaxis, ...]
+        hf['train_si'][train_id, ...] = shape_index[np.newaxis, ...]
         anno_all.append(anno)
 
     for val_id in tqdm(range(len(val_id_list))):
         model_id = val_id_list[val_id]
-        mesh_vox, heatmap_joint, heatmap_bones, heatmap_verts, curvature, sd, anno = \
+        mesh_vox, heatmap_joint, heatmap_bones, heatmap_verts, curvature, sd,curv_index, shape_index, anno = \
             genDataset_inner(root_folder, model_id, subset='val', dim_ori=dim_ori, r=padding, dim_pad=dim_pad)
         hf['val_data'][val_id, :, :, :] = mesh_vox
         hf['val_vert'][val_id, :, :, :] = heatmap_verts
@@ -320,11 +335,13 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
         hf['val_label_bone'][val_id, :, :, :] = heatmap_bones
         hf['val_curvature'][val_id, ...] = curvature[np.newaxis, ...]
         hf['val_sd'][val_id, ...] = sd[np.newaxis, ...]
+        hf['val_ci'][val_id, ...] = curv_index[np.newaxis, ...]
+        hf['val_si'][val_id, ...] = shape_index[np.newaxis, ...]
         anno_all.append(anno)
 
     for test_id in tqdm(range(len(test_id_list))):
         model_id = test_id_list[test_id]
-        mesh_vox, heatmap_joint, heatmap_bones, heatmap_verts, curvature, sd, anno = \
+        mesh_vox, heatmap_joint, heatmap_bones, heatmap_verts, curvature, sd,curv_index, shape_index, anno = \
             genDataset_inner(root_folder, model_id, subset='test', dim_ori=dim_ori, r=padding, dim_pad=dim_pad)
         hf['test_data'][test_id, :, :, :] = mesh_vox
         hf['test_vert'][test_id, :, :, :] = heatmap_verts
@@ -332,6 +349,8 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
         hf['test_label_bone'][test_id, :, :, :] = heatmap_bones
         hf['test_curvature'][test_id, ...] = curvature[np.newaxis, ...]
         hf['test_sd'][test_id, ...] = sd[np.newaxis, ...]
+        hf['test_ci'][test_id, ...] = curv_index[np.newaxis, ...]
+        hf['test_si'][test_id, ...] = shape_index[np.newaxis, ...]
         anno_all.append(anno)
 
     hf.close()
@@ -342,5 +361,5 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
 
 
 if __name__ == '__main__':
-    root_folder = 'model_resource_data/' # the directory to put raw data and generated dataset
+    root_folder = 'model_resource_data/'  # the directory to put raw data and generated dataset
     genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88)
