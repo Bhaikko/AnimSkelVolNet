@@ -206,17 +206,19 @@ def genDataset_inner(root_folder, model_id, subset, dim_ori=82, r=3, dim_pad=88)
     curv_skeletons = os.path.join(root_folder, 'curve_skeletons/{:d}.binvox'.format(model_id))
     skel_file = os.path.join(root_folder, 'skel/{:d}.txt'.format(model_id))
     fs_file = os.path.join(root_folder, 'fs/{:d}_featuresize.txt'.format(model_id))
-    # with open(curv_skeletons, 'rb') as cs:
-    #     curv_skeletons = binvox_rw.read_as_3d_array(cs)
-
-    # curv_skeletons = np.zeros((curv_skeletons.dims[0] + 2 * r, curv_skeletons.dims[1] + 2 * r, curv_skeletons.dims[2] + 2 * r),
-    #                            dtype=np.float16)
-    # curv_skeletons[r:curv_skeletons.dims[0] + r, r:curv_skeletons.dims[1] + r, r:curv_skeletons.dims[2] + r] = curv_skeletons.data
-    # # put the occupied voxels at the center instead of left-top corner
-    # curv_skeletons, center_trans = center_vox(curv_skeletons)
-    # read original voxels and pad it.
     with open(vox_file, 'rb') as f:
         mesh_vox = binvox_rw.read_as_3d_array(f)
+    with open(curv_skeletons, 'rb') as cs:
+        curv_skeletons = binvox_rw.read_as_3d_array(cs)
+
+    curv_skeletons_padded = np.zeros((mesh_vox.dims[0] + 2 * r, mesh_vox.dims[1] + 2 * r, mesh_vox.dims[2] + 2 * r),
+                               dtype=np.float16)
+    curv_skeletons_padded[r:mesh_vox.dims[0] + r, r:mesh_vox.dims[1] + r, r:mesh_vox.dims[2] + r] = curv_skeletons.data
+    # put the occupied voxels at the center instead of left-top corner
+    curv_skeletons_padded, center_trans = center_vox(curv_skeletons_padded)
+    curv_skeletons_padded = bin2sdf(curv_skeletons_padded)
+    # read original voxels and pad it.
+   
     mesh_vox_padded = np.zeros((mesh_vox.dims[0] + 2 * r, mesh_vox.dims[1] + 2 * r, mesh_vox.dims[2] + 2 * r),
                                dtype=np.float16)
     mesh_vox_padded[r:mesh_vox.dims[0] + r, r:mesh_vox.dims[1] + r, r:mesh_vox.dims[2] + r] = mesh_vox.data
@@ -276,7 +278,7 @@ def genDataset_inner(root_folder, model_id, subset, dim_ori=82, r=3, dim_pad=88)
 
     anno = {'name': str(model_id), 'min_5_fs': min_5_fs, 'translate': mesh_vox.translate, 'scale': mesh_vox.scale,
             'subset': subset, 'center_trans': center_trans, 'avg_edge': avg_edge}
-    return mesh_vox_padded, heatmap_joint, heatmap_bones, heatmap_verts, curvature_surface, sd_surface, curv_index, shape_index,curv_skeletons, anno
+    return mesh_vox_padded, heatmap_joint, heatmap_bones, heatmap_verts, curvature_surface, sd_surface, curv_index, shape_index,curv_skeletons_padded, anno
 
 
 def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
@@ -297,7 +299,7 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
     hf.create_dataset('train_sd', (num_train, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('train_ci', (num_train, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('train_si', (num_train, 1, dim_pad, dim_pad, dim_pad), np.float16)
-    hf.create_dataset('train_cs', (num_train, 1, dim_pad, dim_pad, dim_pad), np.float16)
+    hf.create_dataset('train_cs', (num_train, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('train_label_joint', (num_train, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('train_label_bone', (num_train, dim_pad, dim_pad, dim_pad), np.float16)
 
@@ -307,7 +309,7 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
     hf.create_dataset('val_sd', (num_val, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('val_ci', (num_val, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('val_si', (num_val, 1, dim_pad, dim_pad, dim_pad), np.float16)
-    hf.create_dataset('val_cs', (num_val, 1, dim_pad, dim_pad, dim_pad), np.float16)
+    hf.create_dataset('val_cs', (num_val, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('val_label_joint', (num_val, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('val_label_bone', (num_val, dim_pad, dim_pad, dim_pad), np.float16)
 
@@ -317,7 +319,7 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
     hf.create_dataset('test_sd', (num_test, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_ci', (num_test, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_si', (num_test, 1, dim_pad, dim_pad, dim_pad), np.float16)
-    hf.create_dataset('test_cs', (num_test, 1, dim_pad, dim_pad, dim_pad), np.float16)
+    hf.create_dataset('test_cs', (num_test, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_label_joint', (num_test, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_label_bone', (num_test, dim_pad, dim_pad, dim_pad), np.float16)
 
@@ -325,7 +327,7 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
     anno_all = []
     for train_id in tqdm(range(len(train_id_list))):
         model_id = train_id_list[train_id]
-        mesh_vox, heatmap_joint, heatmap_bones, heatmap_verts, curvature, sd, curv_index, shape_index,curv_skeletons, anno = \
+        mesh_vox, heatmap_joint, heatmap_bones, heatmap_verts, curvature, sd, curv_index, shape_index,curv_skeletons_padded, anno = \
             genDataset_inner(root_folder, model_id, subset='train', dim_ori=dim_ori, r=padding, dim_pad=dim_pad)
         hf['train_data'][train_id, :, :, :] = mesh_vox
         hf['train_vert'][train_id, :, :, :] = heatmap_verts
@@ -335,12 +337,12 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
         hf['train_sd'][train_id, ...] = sd[np.newaxis, ...]
         hf['train_ci'][train_id, ...] = curv_index[np.newaxis, ...]
         hf['train_si'][train_id, ...] = shape_index[np.newaxis, ...]
-        # hf['train_cs'][train_id, :, :, :] = curv_skeletons
+        hf['train_cs'][train_id, :, :, :] = curv_skeletons_padded
         anno_all.append(anno)
 
     for val_id in tqdm(range(len(val_id_list))):
         model_id = val_id_list[val_id]
-        mesh_vox, heatmap_joint, heatmap_bones, heatmap_verts, curvature, sd, curv_index, shape_index,curv_skeletons, anno = \
+        mesh_vox, heatmap_joint, heatmap_bones, heatmap_verts, curvature, sd, curv_index, shape_index,curv_skeletons_padded, anno = \
             genDataset_inner(root_folder, model_id, subset='val', dim_ori=dim_ori, r=padding, dim_pad=dim_pad)
         hf['val_data'][val_id, :, :, :] = mesh_vox
         hf['val_vert'][val_id, :, :, :] = heatmap_verts
@@ -350,12 +352,12 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
         hf['val_sd'][val_id, ...] = sd[np.newaxis, ...]
         hf['val_ci'][val_id, ...] = curv_index[np.newaxis, ...]
         hf['val_si'][val_id, ...] = shape_index[np.newaxis, ...]
-        # hf['val_cs'][train_id, :, :, :] = curv_skeletons
+        hf['val_cs'][val_id, :, :, :] = curv_skeletons_padded
         anno_all.append(anno)
 
     for test_id in tqdm(range(len(test_id_list))):
         model_id = test_id_list[test_id]
-        mesh_vox, heatmap_joint, heatmap_bones, heatmap_verts, curvature, sd, curv_index, shape_index,curv_skeletons, anno = \
+        mesh_vox, heatmap_joint, heatmap_bones, heatmap_verts, curvature, sd, curv_index, shape_index,curv_skeletons_padded, anno = \
             genDataset_inner(root_folder, model_id, subset='test', dim_ori=dim_ori, r=padding, dim_pad=dim_pad)
         hf['test_data'][test_id, :, :, :] = mesh_vox
         hf['test_vert'][test_id, :, :, :] = heatmap_verts
@@ -365,7 +367,7 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
         hf['test_sd'][test_id, ...] = sd[np.newaxis, ...]
         hf['test_ci'][test_id, ...] = curv_index[np.newaxis, ...]
         hf['test_si'][test_id, ...] = shape_index[np.newaxis, ...]
-        # hf['test_cs'][train_id, :, :, :] = curv_skeletons
+        hf['test_cs'][test_id, :, :, :] = curv_skeletons_padded
         anno_all.append(anno)
 
     hf.close()
@@ -376,5 +378,5 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
 
 
 if __name__ == '__main__':
-    root_folder = './../dataset'  # the directory to put raw data and generated dataset
+    root_folder = './../data'  # the directory to put raw data and generated dataset
     genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88)
