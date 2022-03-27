@@ -330,14 +330,14 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
         mesh_vox, heatmap_joint, heatmap_bones, heatmap_verts, curvature, sd, curv_index, shape_index,curv_skeletons_padded, anno = \
             genDataset_inner(root_folder, model_id, subset='train', dim_ori=dim_ori, r=padding, dim_pad=dim_pad)
         hf['train_data'][train_id, :, :, :] = mesh_vox
-        hf['train_vert'][train_id, :, :, :] = heatmap_verts
-        hf['train_label_joint'][train_id, :, :, :] = heatmap_joint
+        hf['train_vert'][train_id, :, :, :] = heatmap_verts             # Vertex Density
+        hf['train_label_joint'][train_id, :, :, :] = heatmap_joint      
         hf['train_label_bone'][train_id, :, :, :] = heatmap_bones
-        hf['train_curvature'][train_id, ...] = curvature[np.newaxis, ...]
-        hf['train_sd'][train_id, ...] = sd[np.newaxis, ...]
-        hf['train_ci'][train_id, ...] = curv_index[np.newaxis, ...]
-        hf['train_si'][train_id, ...] = shape_index[np.newaxis, ...]
-        hf['train_cs'][train_id, :, :, :] = curv_skeletons_padded
+        hf['train_curvature'][train_id, ...] = curvature[np.newaxis, ...]   # Curvature Data, Need to remove
+        hf['train_sd'][train_id, ...] = sd[np.newaxis, ...]                 # Shape Diameter
+        hf['train_ci'][train_id, ...] = curv_index[np.newaxis, ...]         # Curvature Index
+        hf['train_si'][train_id, ...] = shape_index[np.newaxis, ...]        # Shape Index
+        hf['train_cs'][train_id, :, :, :] = curv_skeletons_padded           # Curve Skeleton
         anno_all.append(anno)
 
     for val_id in tqdm(range(len(val_id_list))):

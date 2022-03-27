@@ -49,6 +49,13 @@ def main(args):
         input_channel += 1
     if 'sd' in args.input_feature:
         input_channel += 1
+    if 'si' in args.input_feature:
+        input_channel += 1
+    if 'ci' in args.input_feature:
+        input_channel += 1
+    if 'cs' in args.input_feature:
+        input_channel += 1
+    
     n_stack = args.num_stack
 
     model = models3D.__dict__[args.arch](input_channels=input_channel, n_stack=n_stack)
@@ -275,7 +282,7 @@ if __name__ == '__main__':
     parser.add_argument('--json_file', type=str, help='annotation json file',
                         default='model_resource_data/model-resource-volumetric.json')
     parser.add_argument('--output_dir', type=str, default='volNet', help='prediction output folder')
-    parser.add_argument('--input_feature', type=str, nargs='+', default=['curvature', 'sd', 'vertex_kde'],
+    parser.add_argument('--input_feature', type=str, nargs='+', default=['cs', 'si', 'ci'],
                         help='input feature name list (curvature, sd, vertex_kde)')
 
     print(parser.parse_args())
