@@ -26,6 +26,10 @@ class Heatmap3D_sdf(data.Dataset):
             self.bone_label = h5data['train_label_bone']
             self.curvature = h5data['train_curvature']
             self.sd = h5data['train_sd']
+
+            self.cs = h5data['train_cs']
+            self.si = h5data['train_si']
+            self.ci = h5data['train_ci']
         elif subset == 'val':
             self.annos = [anno for anno in annos if anno['subset']=='val']
             self.data = h5data['val_data']
@@ -34,6 +38,10 @@ class Heatmap3D_sdf(data.Dataset):
             self.bone_label = h5data['val_label_bone']
             self.curvature = h5data['val_curvature']
             self.sd = h5data['val_sd']
+
+            self.cs = h5data['val_cs']
+            self.si = h5data['val_si']
+            self.ci = h5data['val_ci']
         elif subset == 'test':
             self.annos = [anno for anno in annos if anno['subset'] == 'test']
             self.data = h5data['test_data']
@@ -42,6 +50,11 @@ class Heatmap3D_sdf(data.Dataset):
             self.bone_label = h5data['test_label_bone']
             self.curvature = h5data['test_curvature']
             self.sd = h5data['test_sd']
+
+            self.cs = h5data['test_cs']
+            self.si = h5data['test_si']
+            self.ci = h5data['test_ci']
+
         self.struct = np.ones((3, 3, 3)).astype(bool)
 
     def __getitem__(self, index):
@@ -76,6 +89,21 @@ class Heatmap3D_sdf(data.Dataset):
             sd = self.sd[index].astype(np.float32)
             sd = torch.from_numpy(sd)
             model = torch.cat((model, sd), dim=0)
+
+        if 'si' in self.input_feature:
+            si = self.si[index].astype(np.float32)
+            si = torch.from_numpy(si)
+            model = torch.cat((model, si), dim = 0)
+
+        if 'ci' in self.input_feature:
+            ci = self.ci[index].astype(np.float32)
+            ci = torch.from_numpy(ci)
+            model = torch.cat((model, ci), dim = 0)
+
+        if 'cs' in self.input_feature:
+            cs = self.cs[index].astype(np.float32)
+            cs = torch.from_numpy(cs)
+            model = torch.cat((model, cs), dim = 0)
 
         # Meta info
         meta = {'index': index, 'min_5_fs': self.annos[index]['min_5_fs'], 'name': self.annos[index]['name'],

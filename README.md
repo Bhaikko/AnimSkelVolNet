@@ -8,7 +8,7 @@ We suggest to use conda virtual environment, which can be set up as following:
 ```
 conda create -n AnimSkelVolNet python=3.6
 . activate AnimSkelVolNet
-pip install numpy, scipy, future, tensorboard, h5py, open3d, tqdm, opencv-python
+pip install numpy scipy future tensorboard h5py open3d tqdm opencv-python
 pip install torch==1.2.0 torchvision==0.4.0 -f https://download.pytorch.org/whl/torch_stable.html
 ```
 
@@ -72,5 +72,9 @@ You can run maya_bind.py in Maya to bind the predicted skeleton with the mesh. T
 ### Training
 To train a model by yourself, run the following command
 
-`python run_trainval.py --arch 'v2v_hg' --data_path 'DATA_PATH/model-resource-volumetric.h5' --json_file 'DATA_PATH/model-resource-volumetric.json' --checkpoint 'checkpoints/volNet' --logdir 'logs/volNet' --lr 1e-4 --train-batch 4 --test-batch 4 --input_feature curvature sd vertex_kde --num_stack 4 --epochs 50`
+`python3 run_trainval.py --arch 'v2v_hg' --data_path 'DATA_PATH/model-resource-volumetric.h5' --json_file 'DATA_PATH/model-resource-volumetric.json' --checkpoint 'checkpoints/volNet' --logdir 'logs/volNet' --lr 1e-4 --train-batch 4 --test-batch 4 --input_feature curvature sd vertex_kde --num_stack 4 --epochs 50`
+
+`python3 run_trainval.py --arch 'v2v_hg' --data_path './input/model-resource-volumetric.h5' --json_file './input/model-resource-volumetric.json' --checkpoint 'checkpoints/volNet' --logdir 'logs/volNet' --lr 1e-4 --train-batch 4 --test-batch 4 --input_feature curvature sd vertex_kde --num_stack 4 --epochs 50`
+
+`python3 run_trainval.py --arch 'v2v_hg' --data_path './input/model-resource-volumetric.h5' --json_file './input/model-resource-volumetric.json' --checkpoint 'checkpoints/volNet' --logdir 'logs/volNet' --lr 1e-4 --train-batch 4 --test-batch 4 --input_feature vertex_kde si ci cs --num_stack 4 --epochs 50`
 
