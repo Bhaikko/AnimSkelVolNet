@@ -299,7 +299,7 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
     hf.create_dataset('train_sd', (num_train, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('train_ci', (num_train, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('train_si', (num_train, 1, dim_pad, dim_pad, dim_pad), np.float16)
-    hf.create_dataset('train_cs', (num_train, dim_pad, dim_pad, dim_pad), np.float16)
+    hf.create_dataset('train_cs', (num_train, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('train_label_joint', (num_train, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('train_label_bone', (num_train, dim_pad, dim_pad, dim_pad), np.float16)
 
@@ -309,7 +309,7 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
     hf.create_dataset('val_sd', (num_val, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('val_ci', (num_val, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('val_si', (num_val, 1, dim_pad, dim_pad, dim_pad), np.float16)
-    hf.create_dataset('val_cs', (num_val, dim_pad, dim_pad, dim_pad), np.float16)
+    hf.create_dataset('val_cs', (num_val, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('val_label_joint', (num_val, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('val_label_bone', (num_val, dim_pad, dim_pad, dim_pad), np.float16)
 
@@ -319,7 +319,7 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
     hf.create_dataset('test_sd', (num_test, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_ci', (num_test, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_si', (num_test, 1, dim_pad, dim_pad, dim_pad), np.float16)
-    hf.create_dataset('test_cs', (num_test, dim_pad, dim_pad, dim_pad), np.float16)
+    hf.create_dataset('test_cs', (num_test, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_label_joint', (num_test, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_label_bone', (num_test, dim_pad, dim_pad, dim_pad), np.float16)
 
@@ -378,5 +378,5 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
 
 
 if __name__ == '__main__':
-    root_folder = './../data'  # the directory to put raw data and generated dataset
+    root_folder = './data'  # the directory to put raw data and generated dataset
     genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88)
