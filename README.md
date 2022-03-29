@@ -74,7 +74,5 @@ To train a model by yourself, run the following command
 
 `python3 run_trainval.py --arch 'v2v_hg' --data_path 'DATA_PATH/model-resource-volumetric.h5' --json_file 'DATA_PATH/model-resource-volumetric.json' --checkpoint 'checkpoints/volNet' --logdir 'logs/volNet' --lr 1e-4 --train-batch 4 --test-batch 4 --input_feature curvature sd vertex_kde --num_stack 4 --epochs 50`
 
-`python3 run_trainval.py --arch 'v2v_hg' --data_path './input/model-resource-volumetric.h5' --json_file './input/model-resource-volumetric.json' --checkpoint 'checkpoints/volNet' --logdir 'logs/volNet' --lr 1e-4 --train-batch 4 --test-batch 4 --input_feature curvature sd vertex_kde --num_stack 4 --epochs 50`
-
 `python3 run_trainval.py --arch 'v2v_hg' --data_path './input/model-resource-volumetric.h5' --json_file './input/model-resource-volumetric.json' --checkpoint 'checkpoints/volNet' --logdir 'logs/volNet' --lr 1e-4 --train-batch 4 --test-batch 4 --input_feature vertex_kde si ci cs --num_stack 4 --epochs 50`
 

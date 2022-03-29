@@ -295,8 +295,8 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
     hf = h5py.File(os.path.join(root_folder, 'model-resource-volumetric.h5'), 'w')
     hf.create_dataset('train_data', (num_train, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('train_vert', (num_train, dim_pad, dim_pad, dim_pad), np.uint8)
-    hf.create_dataset('train_curvature', (num_train, 2, dim_pad, dim_pad, dim_pad), np.float16)
-    hf.create_dataset('train_sd', (num_train, 1, dim_pad, dim_pad, dim_pad), np.float16)
+    # hf.create_dataset('train_curvature', (num_train, 2, dim_pad, dim_pad, dim_pad), np.float16)
+    # hf.create_dataset('train_sd', (num_train, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('train_ci', (num_train, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('train_si', (num_train, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('train_cs', (num_train, 1, dim_pad, dim_pad, dim_pad), np.float16)
@@ -305,8 +305,8 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
 
     hf.create_dataset('val_data', (num_val, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('val_vert', (num_val, dim_pad, dim_pad, dim_pad), np.uint8)
-    hf.create_dataset('val_curvature', (num_val, 2, dim_pad, dim_pad, dim_pad), np.float16)
-    hf.create_dataset('val_sd', (num_val, 1, dim_pad, dim_pad, dim_pad), np.float16)
+    # hf.create_dataset('val_curvature', (num_val, 2, dim_pad, dim_pad, dim_pad), np.float16)
+    # hf.create_dataset('val_sd', (num_val, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('val_ci', (num_val, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('val_si', (num_val, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('val_cs', (num_val, 1, dim_pad, dim_pad, dim_pad), np.float16)
@@ -315,8 +315,8 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
 
     hf.create_dataset('test_data', (num_test, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_vert', (num_test, dim_pad, dim_pad, dim_pad), np.uint8)
-    hf.create_dataset('test_curvature', (num_test, 2, dim_pad, dim_pad, dim_pad), np.float16)
-    hf.create_dataset('test_sd', (num_test, 1, dim_pad, dim_pad, dim_pad), np.float16)
+    # hf.create_dataset('test_curvature', (num_test, 2, dim_pad, dim_pad, dim_pad), np.float16)
+    # hf.create_dataset('test_sd', (num_test, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_ci', (num_test, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_si', (num_test, 1, dim_pad, dim_pad, dim_pad), np.float16)
     hf.create_dataset('test_cs', (num_test, 1, dim_pad, dim_pad, dim_pad), np.float16)
@@ -333,8 +333,8 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
         hf['train_vert'][train_id, :, :, :] = heatmap_verts             # Vertex Density
         hf['train_label_joint'][train_id, :, :, :] = heatmap_joint      
         hf['train_label_bone'][train_id, :, :, :] = heatmap_bones
-        hf['train_curvature'][train_id, ...] = curvature[np.newaxis, ...]   # Curvature Data, Need to remove
-        hf['train_sd'][train_id, ...] = sd[np.newaxis, ...]                 # Shape Diameter
+        # hf['train_curvature'][train_id, ...] = curvature[np.newaxis, ...]   # Curvature Data, Need to remove
+        # hf['train_sd'][train_id, ...] = sd[np.newaxis, ...]                 # Shape Diameter
         hf['train_ci'][train_id, ...] = curv_index[np.newaxis, ...]         # Curvature Index
         hf['train_si'][train_id, ...] = shape_index[np.newaxis, ...]        # Shape Index
         hf['train_cs'][train_id, :, :, :] = curv_skeletons_padded           # Curve Skeleton
@@ -348,8 +348,8 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
         hf['val_vert'][val_id, :, :, :] = heatmap_verts
         hf['val_label_joint'][val_id, :, :, :] = heatmap_joint
         hf['val_label_bone'][val_id, :, :, :] = heatmap_bones
-        hf['val_curvature'][val_id, ...] = curvature[np.newaxis, ...]
-        hf['val_sd'][val_id, ...] = sd[np.newaxis, ...]
+        # hf['val_curvature'][val_id, ...] = curvature[np.newaxis, ...]
+        # hf['val_sd'][val_id, ...] = sd[np.newaxis, ...]
         hf['val_ci'][val_id, ...] = curv_index[np.newaxis, ...]
         hf['val_si'][val_id, ...] = shape_index[np.newaxis, ...]
         hf['val_cs'][val_id, :, :, :] = curv_skeletons_padded
@@ -363,8 +363,8 @@ def genDataset(root_folder, dim_ori=82, padding=3, dim_pad=88):
         hf['test_vert'][test_id, :, :, :] = heatmap_verts
         hf['test_label_joint'][test_id, :, :, :] = heatmap_joint
         hf['test_label_bone'][test_id, :, :, :] = heatmap_bones
-        hf['test_curvature'][test_id, ...] = curvature[np.newaxis, ...]
-        hf['test_sd'][test_id, ...] = sd[np.newaxis, ...]
+        # hf['test_curvature'][test_id, ...] = curvature[np.newaxis, ...]
+        # hf['test_sd'][test_id, ...] = sd[np.newaxis, ...]
         hf['test_ci'][test_id, ...] = curv_index[np.newaxis, ...]
         hf['test_si'][test_id, ...] = shape_index[np.newaxis, ...]
         hf['test_cs'][test_id, :, :, :] = curv_skeletons_padded

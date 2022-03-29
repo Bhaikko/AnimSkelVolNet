@@ -24,8 +24,8 @@ class Heatmap3D_sdf(data.Dataset):
             self.vert = h5data['train_vert']
             self.joint_label = h5data['train_label_joint']
             self.bone_label = h5data['train_label_bone']
-            self.curvature = h5data['train_curvature']
-            self.sd = h5data['train_sd']
+            # self.curvature = h5data['train_curvature']
+            # self.sd = h5data['train_sd']
 
             self.cs = h5data['train_cs']
             self.si = h5data['train_si']
@@ -36,8 +36,8 @@ class Heatmap3D_sdf(data.Dataset):
             self.vert = h5data['val_vert']
             self.joint_label = h5data['val_label_joint']
             self.bone_label = h5data['val_label_bone']
-            self.curvature = h5data['val_curvature']
-            self.sd = h5data['val_sd']
+            # self.curvature = h5data['val_curvature']
+            # self.sd = h5data['val_sd']
 
             self.cs = h5data['val_cs']
             self.si = h5data['val_si']
@@ -48,8 +48,8 @@ class Heatmap3D_sdf(data.Dataset):
             self.vert = h5data['test_vert']
             self.joint_label = h5data['test_label_joint']
             self.bone_label = h5data['test_label_bone']
-            self.curvature = h5data['test_curvature']
-            self.sd = h5data['test_sd']
+            # self.curvature = h5data['test_curvature']
+            # self.sd = h5data['test_sd']
 
             self.cs = h5data['test_cs']
             self.si = h5data['test_si']
