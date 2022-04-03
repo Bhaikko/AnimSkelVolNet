@@ -8,6 +8,7 @@ A soft non-maximum suppression approach is used for better results.
 Refer to our paper for more details.
 """
 
+
 import os
 import glob
 import cv2
@@ -19,7 +20,7 @@ from scipy.ndimage import binary_erosion as binary_erosion
 from util.tree_utils import TreeNode
 from util.rigging_parser.obj_parser import Mesh_obj
 from util.rigging_parser.skel_parser import Skel
-from util.open3d_utils import show_obj_skel
+# from util.open3d_utils import show_obj_skel
 
 
 def nms_soft(heatmap, th_conf=0.1, size=15, sigma=6):
@@ -479,15 +480,18 @@ def mst_generate(res_folder, best_thred, sigma, size, visualize=True, out_folder
 
         if joint_pos_cartesian is not None:
             if visualize:
-                img = show_obj_skel(mesh, skel.root)
-                cv2.imwrite(os.path.join(out_folder, 'mst_{0}.jpg').format(model_id), img[:, 300:-300, ::-1])
+                # img = show_obj_skel(mesh, skel.root)
+                # cv2.imwrite(os.path.join(out_folder, 'mst_{0}.jpg').format(model_id), img[:, 300:-300, ::-1])
+                pass
         if parent:
             skel.save(os.path.join(out_folder, 'mst_{0}.txt').format(model_id))
 
 
 if __name__ == '__main__':
-    mesh_folder = 'model_resource_data/obj/'
+    # mesh_folder = 'model_resource_data/obj/'
+    mesh_folder = './data/obj/'
     folder_name = 'volNet/'
+    # folder_name = 'model/'
     out_folder = 'results/mst_{0}'.format(folder_name)
     if not os.path.isdir(out_folder):
         os.mkdir(out_folder)

@@ -98,9 +98,11 @@ def main(args):
         print('\nEvaluation only')
         test_loss, test_loss_joint, test_loss_bone = test(test_loader, model, args)
         print('test loss: ', test_loss, 'test_loss_joint: ', test_loss_joint, 'test_loss_bone: ', test_loss_bone)
-        #args.output_dir = args.output_dir + '_val'
-        #val_loss, val_loss_joint, val_loss_bone = test(val_loader, model, args)
-        #print('val loss: ', val_loss, 'val_loss_joint: ', val_loss_joint, 'val_loss_bone: ', val_loss_bone)
+
+        # Validation Loss
+        args.output_dir = args.output_dir + '_val'
+        val_loss, val_loss_joint, val_loss_bone = test(val_loader, model, args)
+        print('val loss: ', val_loss, 'val_loss_joint: ', val_loss_joint, 'val_loss_bone: ', val_loss_bone)
         return
 
     lr = args.lr
