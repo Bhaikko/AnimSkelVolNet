@@ -495,7 +495,7 @@ if __name__ == '__main__':
     out_folder = 'results/mst_{0}'.format(folder_name)
     if not os.path.isdir(out_folder):
         os.mkdir(out_folder)
-    best_thred = 0.02
+    best_thred = 0.02   # Default 0.02
     print(folder_name, best_thred)
     mst_generate('results/{0}'.format(folder_name),
                  best_thred=best_thred, sigma=15, size=11, visualize=True, out_folder=out_folder,
