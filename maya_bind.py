@@ -27,7 +27,7 @@ def load_skel(filename):
         words = li.split()
         if words[5] == 'None':
             root = words[1]
-            print 'root: '+root
+            print ('root: '+root)
             pos = (float(words[2]), float(words[3]), float(words[4]))
             cmds.joint(p=(pos[0], pos[1], pos[2]), name=root)
             break
@@ -50,8 +50,10 @@ def load_skel(filename):
 
 
 if __name__ == '__main__':
-    obj_name = 'DATA_PATH\\obj\\1195.obj'
-    skel_name = 'DATA_PATH\\skel\\1195.txt'
+    # obj_name = 'DATA_PATH\\obj\\1195.obj'
+    # skel_name = 'DATA_PATH\\skel\\1195.txt'
+    obj_name = './data/obj/1195.obj'
+    skel_name = './data/skel/1195.txt'
     
     # import obj
     cmds.file(new=True,force=True)
